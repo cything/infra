@@ -10,7 +10,7 @@ jobs:
           - .#attic-client
           - .#attic-server
           - .#conduwuit
-          - "github:cything/nixpkgs/9a35d495d2f49eee003b57265228844bb48c933e#nixosTests.garage.with-3node-replication1_x"
+          - "github:cything/nixpkgs/97f27249297bf5fbc563014ae9d4884dee27f1e0#nixosTests.garage.with-3node-replication1_x"
     runs-on: ubuntu-latest
     steps:
       - uses: DeterminateSystems/nix-installer-action@main
