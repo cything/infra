@@ -18,6 +18,13 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v30
 
+      - uses: cachix/cachix-action@v14
+        with:
+          name: cything
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          useDaemon: false
+          installCommand: nix profile install nixpkgs#cachix
+
       - name: Setup Attic cache
         uses: ryanccn/attic-action@v0
         with:
@@ -69,6 +76,7 @@ jobs:
           name: cything
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           useDaemon: false
+          installCommand: nix profile install nixpkgs#cachix
 
       - name: Sync repository
         uses: actions/checkout@v4
@@ -118,6 +126,7 @@ jobs:
           name: cything
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           useDaemon: false
+          installCommand: nix profile install nixpkgs#cachix
 
       - name: Sync repository
         uses: actions/checkout@v4
