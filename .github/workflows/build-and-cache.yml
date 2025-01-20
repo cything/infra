@@ -99,6 +99,11 @@ jobs:
           endpoint: ${{ vars.ATTIC_ENDPOINT }}
           cache: ${{ vars.ATTIC_CACHE }}
           token: ${{ secrets.ATTIC_TOKEN }}
+      - uses: cachix/cachix-action@v14
+        with:
+          name: cything
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          useDaemon: false
       - name: Sync repository
         uses: actions/checkout@v4
         with:
