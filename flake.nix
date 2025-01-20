@@ -36,6 +36,7 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ghostty.url = "github:ghostty-org/ghostty";
 
     nixpkgs-garage.url = "github:cything/nixpkgs/garage-module"; # unmerged PR
   };
@@ -110,6 +111,7 @@
               overlays = [
                 inputs.niri.overlays.niri
                 inputs.rust-overlay.overlays.default
+                inputs.ghostty.overlays.default
               ] ++ import ./overlay;
             };
           in
