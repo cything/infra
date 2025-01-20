@@ -11,20 +11,22 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
+
     runs-on: ${{ matrix.os }}
     continue-on-error: true
     steps:
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          logger: pretty
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+
       - name: Setup Attic cache
         uses: ryanccn/attic-action@v0
         with:
           endpoint: ${{ vars.ATTIC_ENDPOINT }}
           cache: ${{ vars.ATTIC_CACHE }}
           token: ${{ secrets.ATTIC_TOKEN }}
+
       - run: nix build -L '${{ matrix.package }}'
+
   build-machines:
     strategy:
       matrix:
@@ -35,6 +37,7 @@ jobs:
         os:
           - ubuntu-latest
           # - macos-latest
+ 
     runs-on: ${{ matrix.os }}
     continue-on-error: true
     steps:
@@ -50,21 +53,30 @@ jobs:
           remove-docker-images: 'true'
           build-mount-path: /nix
           build-mount-path-ownership: 'root:root'
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          logger: pretty
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+
       - name: Setup Attic cache
         uses: ryanccn/attic-action@v0
         with:
           endpoint: ${{ vars.ATTIC_ENDPOINT }}
           cache: ${{ vars.ATTIC_CACHE }}
           token: ${{ secrets.ATTIC_TOKEN }}
+
+      - uses: cachix/cachix-action@v14
+        with:
+          name: cything
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          useDaemon: false
+
       - name: Sync repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - run: nix build -L --accept-flake-config .#nixosConfigurations.${{ matrix.machine }}.config.system.build.toplevel
+
   build-homes:
     strategy:
       matrix:
@@ -74,6 +86,7 @@ jobs:
         os:
           - ubuntu-latest
           # - macos-latest
+
     runs-on: ${{ matrix.os }}
     continue-on-error: true
     steps:
@@ -89,23 +102,26 @@ jobs:
           remove-docker-images: 'true'
           build-mount-path: /nix
           build-mount-path-ownership: 'root:root'
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          logger: pretty
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+
       - name: Setup Attic cache
         uses: ryanccn/attic-action@v0
         with:
           endpoint: ${{ vars.ATTIC_ENDPOINT }}
           cache: ${{ vars.ATTIC_CACHE }}
           token: ${{ secrets.ATTIC_TOKEN }}
+
       - uses: cachix/cachix-action@v14
         with:
           name: cything
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           useDaemon: false
+
       - name: Sync repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - run: nix build -L --accept-flake-config .#homeConfigurations."${{ matrix.home }}".activationPackage
